@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building the code using Maven.'
+            }
+        }
+        stage('Unit and Integration Tests') {
+            steps {
+                echo 'Running unit tests with JUnit.'
+                echo 'Running integration tests with TestNG.'
+            }
+        }
+        stage('Code Analysis') {
+            steps {
+                echo 'Analysing the code with SonarQube using Jenkins.'
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                echo 'Performing security scan on the code with OWASP ZAP.'
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploying the application to a staging server (AWS EC2 instance).'
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on the staging environment with Selenium.'
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                echo 'Deploying the application to a production server (AWS EC2 instance).'
+            }
+        }
+    }
+    post {
+        always {
+            // Send notification emails at the end of test and security scan stages
+            mail to: 'shravanreddypulagam@gmail.com',
+            subject: "${currentBuild.result}: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: "${currentBuild.result}: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n\nCheck console output at ${env.BUILD_URL} to view logs."
+
+            // emailext attachLog: true, body: "${currentBuild.result}: ${BUILD_URL}", compressLog: true,
+            // subject: "Build Notification: ${JOB_NAME}-Build# ${BUILD_NUMBER} ${currentBuild.result}", to: 'shravanreddypulagam@gmail.com'
+        }
+    }
+}
